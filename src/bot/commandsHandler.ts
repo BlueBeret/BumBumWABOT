@@ -1,5 +1,6 @@
 
 import WAWebJS, { Client, List } from "whatsapp-web.js";
+var spawn = require('child_process').spawn;
 
 type command = {
     [key: string]: Function
@@ -15,7 +16,12 @@ class CommandHandler {
         this.commands = {};
         this.commands['ping'] = this.pingHandler;
         this.commands['say'] = this.sayHandler;
-        this.commands['bbig'] = this.bbigHandler;
+        this.commands['ig'] = this.bbigHandler;
+        this.commands['cputemp'] = this.cputempHandler;
+    }
+
+    isOwner(owner: string): boolean {
+        return (owner === process.env.OWNER)
     }
 
     handleCommand(msg: WAWebJS.Message): void {
@@ -24,20 +30,34 @@ class CommandHandler {
             const args = msg.body.split(' ').slice(1);
             console.log("command:", command, "args:", args)
             if (this.commands[command]) {
-                this.commands[command](msg,args);
+                this.commands[command](msg, args);
             }
         }
     }
 
-    pingHandler(msg: WAWebJS.Message, args:Array<string>): void {
+    pingHandler(msg: WAWebJS.Message, args: Array<string>): void {
         msg.react('👍');
     }
 
-    sayHandler( msg: WAWebJS.Message, args:Array<string>): void {
+    sayHandler(msg: WAWebJS.Message, args: Array<string>): void {
         msg.reply(args.join(' '));
     }
 
     bbigHandler(msg: WAWebJS.Message, args: Array<string>): void {
+    }
+
+    cputempHandler(msg: WAWebJS.Message, args: Array<string>): void {
+        if (msg.from === process.env.OWNER) {
+            msg.react('👍')
+            let temp = spawn('cat', ['/sys/class/thermal/thermal_zone0/temp']);
+
+            temp.stdout.on('data', function (data: number) {
+                msg.reply('Result: ' + data / 1000 + ' degrees Celcius');
+            });
+            return
+        }
+        msg.react('👎')
+        msg.reply("You are not mighty enough to use this command!")
     }
 }
 export { CommandHandler };

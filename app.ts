@@ -2,11 +2,13 @@ import {  Client, LocalAuth} from "whatsapp-web.js";
 import qrcode from "qrcode-terminal";
 import { CommandHandler } from "./src/bot/commandsHandler";
 
+require('dotenv').config();
+
 const client = new Client({
     authStrategy: new LocalAuth,
     puppeteer: {
         headless: true,
-        executablePath: "/usr/bin/google-chrome-stable",
+//        executablePath: "/usr/bin/google-chrome-stable",
         args: [
             '--no-sandbox',
             '--disable-setuid-sandbox',
