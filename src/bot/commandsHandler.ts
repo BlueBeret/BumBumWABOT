@@ -18,6 +18,7 @@ class CommandHandler {
         this.commands['say'] = this.sayHandler;
         this.commands['ig'] = this.bbigHandler;
         this.commands['cputemp'] = this.cputempHandler;
+        this.commands['sticker'] = this.stickerHandler;
     }
 
     isOwner(owner: string): boolean {
@@ -58,6 +59,18 @@ class CommandHandler {
         }
         msg.react('👎')
         msg.reply("You are not mighty enough to use this command!")
+    }
+
+    async stickerHandler(msg: WAWebJS.Message, args: Array<string>) {
+        // resend user image as sticker
+        if (!msg.hasMedia) {
+            msg.reply("Please attach an image :D")
+            return
+        }
+        const media = await msg.downloadMedia()
+        ;(await msg.getChat()).sendMessage(media, {sendMediaAsSticker: true})
+
+        
     }
 }
 export { CommandHandler };
