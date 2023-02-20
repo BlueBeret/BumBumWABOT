@@ -1,7 +1,8 @@
 {
   "license": "MIT",
   "scripts": {
-    "dev": "nodemon app.ts"
+    "dev": "nodemon app.ts",
+    "build": "tsc --build tsconfig.json"
   },
   "devDependencies": {
     "@types/qrcode-terminal": "^0.12.0",
